@@ -3,7 +3,9 @@ package service;
 import model.Customer;
 import model.LineItem;
 import model.Order;
+import model.Product;
 
+import javax.sound.sampled.Line;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -154,5 +156,22 @@ public class OrderService extends DAO <Order> {
         order.setComments(rs.getString(Order.COL_COMMENTS));
 
         return order;
+    }
+
+    public boolean deleteOrders(String id) throws SQLException {
+        builder.reset();
+        QueryBuilder query = builder
+                .delete()
+                .from(LineItem.TABLE_NAME)
+                .where(LineItem.COL_PRODUCT_CODE + " = ?");
+
+        PreparedStatement statement = DBConnection
+                .getConnection()
+                .prepareStatement(query.getQuery());
+
+        statement.setString(1, id);
+
+        System.out.println(statement);
+        return statement.execute();
     }
 }

@@ -1,11 +1,10 @@
 package control;
 
-import service.MainService;
+import action.ProductAction;
+import service.MainObjectService;
 import service.ProductService;
-import service.QueryBuilder;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,21 +15,13 @@ import java.sql.SQLException;
 
 @WebServlet(name = "control.ProductController", urlPatterns = {"/products/*"})
 public class ProductController extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    ProductAction productAction = new ProductAction();
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ProductService productService = MainService.getInstance().getProductService();
-
-
-        try {
-            request.setAttribute("products", productService.getAll());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        RequestDispatcher rd = getServletContext().getRequestDispatcher("/products.jsp");
-        rd.forward(request, response);
+        productAction.execute(request, response);
     }
 }

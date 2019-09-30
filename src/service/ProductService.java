@@ -41,11 +41,13 @@ public class ProductService extends DAO <Product> {
         QueryBuilder query = builder
                 .select("*")
                 .from(Product.TABLE_NAME)
-                .where(Product.COL_PRODUCT_CODE + " = ?");
+                .where(Product.ID + " = ?");
 
         String stringQuery = query.getQuery();
 
         PreparedStatement statement = DBConnection.getConnection().prepareStatement(stringQuery);
+        statement.setString(1, id);
+
         ResultSet rs = statement.executeQuery();
 
         if (rs.next()) {
@@ -69,7 +71,9 @@ public class ProductService extends DAO <Product> {
                                         .prepareStatement(query.getQuery());
 
         statement = injectItemToStatement(updated, statement);
-        statement.setString(10, id);
+        statement.setString(Product.COLUMNS.length+1, id);
+
+        System.out.println(statement);
 
         return statement.execute();
     }
@@ -83,13 +87,13 @@ public class ProductService extends DAO <Product> {
                 .from(Product.TABLE_NAME)
                 .where(Product.COL_PRODUCT_CODE + " = ?");
 
-        System.out.println(query.getQuery());
 
         PreparedStatement statement = DBConnection
                 .getConnection()
                 .prepareStatement(query.getQuery());
 
         statement.setString(1, id);
+        System.out.println(statement);
 
         return statement.execute();
     }

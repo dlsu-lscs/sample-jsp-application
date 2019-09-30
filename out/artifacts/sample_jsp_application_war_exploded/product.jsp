@@ -12,7 +12,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title> JSP | Home </title>
+    <title> JSP | Products </title>
     <!-- LIBRARIES -->
 
     <!-- JQuery -->
@@ -52,10 +52,22 @@
 <body>
 <div id="main" class = "ui container">
     <h1> PRODUCTS </h1>
-    <button class = "ui green button">
+    <a class = "ui green button" href="/products/add">
         ADD PRODUCT
-    </button>
-    <table class = "ui celled padded table">
+    </a>
+    <c:choose>
+            <c:when test = "${param.deleted == 'true'}">
+            <div class = "ui green message">
+                Successfully deleted!
+            </div>
+        </c:when>
+        <c:when test = "${param.deleted == 'false'}">
+            <div class = "ui red message">
+                There was an error deleting the product!
+            </div>
+        </c:when>
+    </c:choose>
+    <table class = "ui celled selectable padded table">
         <thead>
             <tr>
                 <th> Code </th>
@@ -63,20 +75,31 @@
                 <th> Quantity </th>
                 <th> Buy Price </th>
                 <th> MSRP </th>
+                <th> Actions </th>
             </tr>
         </thead>
         <tbody>
+            <c:forEach var="product" items="${products}">
+                <tr>
+                    <td>
+                        <a href = "/products/${product.code}">
+                                ${product.code}
+                        </a>
 
+                    </td>
+                    <td> ${product.name} </td>
+                    <td> ${product.quantity} </td>
+                    <td> ${product.buyPrice} </td>
+                    <td> ${product.MSRP} </td>
+                    <td>
+                        <form class = "ui form" method="POST" action="/products/delete">
+                            <input type="hidden" name = "id" value="${product.code}"/>
+                            <button class = "ui red button"> DELETE </button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
         </tbody>
-        <c:forEach var="product" items="${products}">
-            <tr>
-                <td> ${product.code} </td>
-                <td> ${product.name} </td>
-                <td> ${product.quantity} </td>
-                <td> ${product.buyPrice} </td>
-                <td> ${product.MSRP} </td>
-            </tr>
-        </c:forEach>
     </table>
 </div>
 </body>
