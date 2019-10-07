@@ -78,7 +78,7 @@
 
             <div class = "field">
                 <label> Quantity </label>
-                <input type="text" value="${product.quantity}" name="product[quantity]"/>
+                <input type="number" value="${product.quantity}" name="product[quantity]"/>
             </div>
 
             <div class = "field">
@@ -98,7 +98,7 @@
                     <button id = "edit" class = "ui blue button">
                         EDIT
                     </button>
-                    <button class = "ui green button">
+                    <button disabled="" id = "save" class = "ui green button">
                         SAVE
                     </button>
                     <script>
@@ -122,10 +122,10 @@
 <script>
     $("#edit").on('click', function(e){
         e.preventDefault()
-        $("#edit").prop("readonly", true)
+        $("#edit").prop("disabled", true)
         $("input").prop("readonly", false)
         $("textarea").prop("readonly", false)
-        $("#productCode").prop("readonly", true)
+        $("#productCode").prop("disabled", true)
         $("#save").prop("disabled", false)
     })
 </script>

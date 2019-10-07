@@ -74,7 +74,9 @@ public class QueryBuilder {
         }
 
         if (withParenthesis)
-            this.query += ") ";
+            this.query += ")";
+
+        this.query += " ";
 
         return this;
     }
@@ -108,5 +110,11 @@ public class QueryBuilder {
         }
 
         return this.getCombined(false, updatedPairs);
+    }
+
+    public QueryBuilder orderBy(String colProductCode, boolean desc) {
+        this.query += "ORDER BY " + colProductCode + " ";
+        this.query += desc ? "DESC " : "";
+        return this;
     }
 }

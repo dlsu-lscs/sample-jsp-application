@@ -19,7 +19,8 @@ public class ProductService extends DAO <Product> {
         List <Product> products = new ArrayList<>();
         QueryBuilder query = builder
                     .select("*")
-                    .from(Product.TABLE_NAME);
+                    .from(Product.TABLE_NAME)
+                    .orderBy(Product.COL_PRODUCT_CODE, true);
 
         String stringQuery = query.getQuery();
 

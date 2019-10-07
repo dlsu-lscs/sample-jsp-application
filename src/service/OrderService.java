@@ -158,12 +158,30 @@ public class OrderService extends DAO <Order> {
         return order;
     }
 
-    public boolean deleteOrders(String id) throws SQLException {
+    public boolean deleteOrdersWithUsers (String id) throws SQLException {
+        builder.reset();
+
+        QueryBuilder query = builder
+                .delete()
+                .from(Order.TABLE_NAME)
+                .where(Order.COL_CUSTOMER_ID + " = ?");
+
+        PreparedStatement statement = DBConnection
+                .getConnection()
+                .prepareStatement(query.getQuery());
+
+        statement.setInt(1, Integer.parseInt(id));
+
+        System.out.println(statement);
+        return statement.execute();
+    }
+
+    public boolean deleteOrdersWithProducts(String id) throws SQLException {
         builder.reset();
         QueryBuilder query = builder
                 .delete()
                 .from(LineItem.TABLE_NAME)
-                .where(LineItem.COL_PRODUCT_CODE + " = ?");
+                .where(LineItem.COL_PRODUCT_CODE + " = ?"); 
 
         PreparedStatement statement = DBConnection
                 .getConnection()

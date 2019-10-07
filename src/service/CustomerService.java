@@ -2,9 +2,7 @@ package service;
 
 import model.Customer;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +18,8 @@ public class CustomerService extends DAO <Customer> {
         List <Customer> customers = new ArrayList<>();
         QueryBuilder query = builder
                 .select("*")
-                .from(Customer.TABLE_NAME);
+                .from(Customer.TABLE_NAME)
+                .orderBy(Customer.COL_CUSTOMER_ID, true);
 
         PreparedStatement statement = DBConnection.getConnection().prepareStatement(query.getQuery());
         ResultSet rs = statement.executeQuery();
@@ -45,6 +44,7 @@ public class CustomerService extends DAO <Customer> {
         String stringQuery = query.getQuery();
 
         PreparedStatement statement = DBConnection.getConnection().prepareStatement(stringQuery);
+        statement.setInt(1, Integer.parseInt(id));
         ResultSet rs = statement.executeQuery();
 
         if (rs.next()) {
@@ -67,8 +67,10 @@ public class CustomerService extends DAO <Customer> {
                 .getConnection()
                 .prepareStatement(query.getQuery());
 
+        statement.setInt(Customer.COLUMNS.length + 1, Integer.parseInt(id));
         statement = injectItemToStatement(updated, statement);
-        statement.setInt(1, Integer.parseInt(id));
+
+        System.out.println(statement);
 
         return statement.execute();
     }
@@ -115,14 +117,13 @@ public class CustomerService extends DAO <Customer> {
         statement.setString(2, newItem.getContactLastName());
         statement.setString(3, newItem.getContactFirstName());
         statement.setString(4, newItem.getPhone());
-        statement.setString(5, newItem.getPhone());
-        statement.setString(6, newItem.getAddressLine1());
-        statement.setString(7, newItem.getAddressLine2());
-        statement.setString(8, newItem.getCity());
-        statement.setString(9, newItem.getState());
-        statement.setString(10, newItem.getPostalCode());
-        statement.setString(11, newItem.getCountry());
-        statement.setString(12, newItem.getCreditLimit());
+        statement.setString(5, newItem.getAddressLine1());
+        statement.setString(6, newItem.getAddressLine2());
+        statement.setString(7, newItem.getCity());
+        statement.setString(8, newItem.getState());
+        statement.setString(9, newItem.getPostalCode());
+        statement.setString(10, newItem.getCountry());
+        statement.setString(11, newItem.getCreditLimit());
         return statement;
     }
 

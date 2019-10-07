@@ -56,7 +56,7 @@
         ADD PRODUCT
     </a>
     <c:choose>
-            <c:when test = "${param.deleted == 'true'}">
+        <c:when test = "${param.deleted == 'true'}">
             <div class = "ui green message">
                 Successfully deleted!
             </div>
@@ -64,6 +64,27 @@
         <c:when test = "${param.deleted == 'false'}">
             <div class = "ui red message">
                 There was an error deleting the product!
+            </div>
+        </c:when>
+        <c:when test = "${param.created == 'true'}">
+            <div class = "ui green message">
+                Product added to list!
+            </div>
+        </c:when>
+        <c:when test = "${param.created == 'false'}">
+            <div class = "ui red message">
+                There was an error adding the product!
+            </div>
+        </c:when>
+
+        <c:when test = "${param.updated == 'true'}">
+            <div class = "ui green message">
+                Product modified!
+            </div>
+        </c:when>
+        <c:when test = "${param.updated == 'false'}">
+            <div class = "ui red message">
+                There was an error modifying the product!
             </div>
         </c:when>
     </c:choose>

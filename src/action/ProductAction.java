@@ -1,6 +1,5 @@
 package action;
 
-import action.Action;
 import model.Product;
 import service.MainObjectService;
 import service.OrderService;
@@ -32,7 +31,6 @@ public class ProductAction implements Action {
 
         if (method.equals("POST") && next.equals("delete")) {
             try {
-                orderService.deleteOrders(request.getParameter("id"));
                 productService.delete(request.getParameter("id"));
             } catch (SQLException e) {
                 response.sendRedirect("/products?deleted=false");
@@ -73,9 +71,12 @@ public class ProductAction implements Action {
             int quantity = Integer.parseInt(request.getParameter("product[quantity]"));
             product.setQuantity(quantity);
 
+            boolean update = false;
+
             try {
                 if (productService.getOne(code) != null) {
                     productService.update(code, product);
+                    update = true;
 
                     response.sendRedirect("/products?updated=true");
                     return;
@@ -88,7 +89,12 @@ public class ProductAction implements Action {
                 e.printStackTrace();
             }
 
+            if (update) {
+                response.sendRedirect("/products?updated=false");
+                return;
+            }
 
+            response.sendRedirect("/products?created=false");
             return;
         }
 
