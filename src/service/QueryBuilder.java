@@ -117,4 +117,9 @@ public class QueryBuilder {
         this.query += desc ? "DESC " : "";
         return this;
     }
+
+    public QueryBuilder join(String table1, String id1, String table2, String id2) {
+        this.query += String.format("JOIN %s ON %s.%s = %s.%s ", table2, table1, id1, table2, id2);
+        return this;
+    }
 }

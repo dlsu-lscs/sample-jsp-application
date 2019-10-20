@@ -16,4 +16,8 @@
         <servlet-name>ProductController</servlet-name>
         <servlet-class>control.ProductController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>OrderController</servlet-name>
+        <servlet-class>control.OrderController</servlet-class>
+    </servlet>
 </web-app>
