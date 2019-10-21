@@ -48,13 +48,15 @@ public class OrderService extends DAO <Order> {
         Order order = null;
         QueryBuilder query = builder
                 .select("*")
-                .from(Order.TABLE_NAME + "," + Customer.ID)
-                .where(Order.ID + " = ?",
-                        Order.COL_CUSTOMER_ID + " = " + Customer.ID);
-
+                .from(Order.TABLE_NAME + "," + Customer.TABLE_NAME)
+                .where(Order.ID + " = ? ",
+                        "AND ",
+                        Order.TABLE_NAME + "." + Order.COL_CUSTOMER_ID + " = " + Customer.TABLE_NAME + "." + Customer.ID);
         String stringQuery = query.getQuery();
 
         PreparedStatement statement = DBConnection.getConnection().prepareStatement(stringQuery);
+
+        statement.setInt(1, Integer.parseInt(id));
         ResultSet rs = statement.executeQuery();
 
         if (rs.next()) {

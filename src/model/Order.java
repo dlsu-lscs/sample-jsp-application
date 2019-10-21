@@ -1,5 +1,6 @@
 package model;
 
+import javax.sound.sampled.Line;
 import java.sql.Date;
 import java.util.List;
 
@@ -29,9 +30,13 @@ public class Order {
     private Date shippedDate;
     private String status;
     private String comments;
+    private double finalPrice;
 
     private Customer customer;
     private List <LineItem> orderDetails;
+
+    public Order() {
+    }
 
     public int getOrderNumber() {
         return orderNumber;
@@ -95,5 +100,18 @@ public class Order {
 
     public void setOrderDetails(List<LineItem> orderDetails) {
         this.orderDetails = orderDetails;
+        this.finalPrice = 0;
+
+        for (LineItem item:this.orderDetails) {
+            this.finalPrice += item.getPriceEach() * item.getQuantityOrdered();
+        }
+    }
+
+    public double getFinalPrice() {
+        return finalPrice;
+    }
+
+    public void setFinalPrice(double finalPrice) {
+        this.finalPrice = finalPrice;
     }
 }

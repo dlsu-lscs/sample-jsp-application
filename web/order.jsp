@@ -104,6 +104,7 @@
             <th> Order Date </th>
             <th> Status </th>
             <th> Comments </th>
+            <th> Price </th>
             <th> Item Count </th>
             <th> Action </th>
         </tr>
@@ -116,9 +117,12 @@
                                 ${order.orderNumber}
                         </a>
                     </td>
-                    <td> ${order.orderDate} </td>
+                    <td class = "two wide"> ${order.orderDate} </td>
                     <td> ${order.status} </td>
                     <td> ${order.comments} </td>
+                    <td>
+                        ${order.finalPrice}
+                    </td>
                     <td>
                         ${fn:length(order.orderDetails)}
                     </td>

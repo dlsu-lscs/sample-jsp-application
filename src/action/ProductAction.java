@@ -19,11 +19,6 @@ public class ProductAction implements Action {
             .getObjects()
             .get(ProductService.class.getName());
 
-    OrderService orderService =  (OrderService) MainObjectService
-            .getInstance()
-            .getObjects()
-            .get(OrderService.class.getName());
-
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String next = request.getPathInfo() == null ? "": request.getPathInfo().replace("/", "");

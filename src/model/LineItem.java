@@ -25,6 +25,7 @@ public class LineItem {
     private int orderLineNumber;
     private int quantityOrdered;
     private double priceEach;
+    private double total;
 
     public Product getProduct() {
         return product;
@@ -48,6 +49,8 @@ public class LineItem {
 
     public void setQuantityOrdered(int quantityOrdered) {
         this.quantityOrdered = quantityOrdered;
+        this.total = 0;
+        this.total += priceEach * quantityOrdered;
     }
 
     public double getPriceEach() {
@@ -56,6 +59,8 @@ public class LineItem {
 
     public void setPriceEach(double priceEach) {
         this.priceEach = priceEach;
+        this.total = 0;
+        this.total += priceEach * quantityOrdered;
     }
 
     public int getOrderNumber() {
@@ -64,5 +69,13 @@ public class LineItem {
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 }
