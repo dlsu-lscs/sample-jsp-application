@@ -162,11 +162,10 @@ public class LineItemService extends DAO<LineItem> {
     @Override
     public PreparedStatement injectItemToStatement(LineItem newItem, PreparedStatement statement) throws SQLException {
         statement.setInt(1, newItem.getOrderNumber());
-        statement.setInt(2, newItem.getOrderLineNumber());
+        statement.setString(2, newItem.getProduct().getCode());
         statement.setInt(3, newItem.getQuantityOrdered());
         statement.setDouble(4, newItem.getPriceEach());
         statement.setInt(5, newItem.getOrderLineNumber());
-        statement.setString(6, newItem.getProduct().getCode());
         return statement;
     }
 

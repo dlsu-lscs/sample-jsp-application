@@ -16,8 +16,8 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <!-- Semantic -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Be+Vietnam|Merriweather&display=swap" rel="stylesheet">
@@ -44,11 +44,43 @@
         #main {
             margin: 100px 0px;
         }
+
+        #product-list {
+            height: 60vh;
+            overflow-y: scroll;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 <div id = "main" class = "ui container">
     <h3> Order Form </h3>
+    <c:choose>
+        <c:when test="${action == 'CREATE'}">
+            <div id = "product-list" class = "ui three centered cards">
+                <c:forEach var="product" items="${products}">
+                    <form class = "ui card add-product-form" method="POST" action="/orders/add-product">
+                        <input type="hidden" name = "lineitem[code]" value="${product.code}">
+                        <input type="hidden" name = "lineitem[orderno]" value="${order.orderNumber}">
+                        <div class="content">
+                            <div class="header"> ${product.name} </div>
+                            <div class = "meta">
+                                $ ${product.buyPrice}
+                            </div>
+                        </div>
+                        <div class = "content ui form">
+                            <div class = "ui field">
+                                <label> Quantity </label>
+                                <input type="number" name="lineitem[quantity]">
+                            </div>
+                        </div>
+                        <button class = "ui green button"> Buy </button>
+                    </form>
+                </c:forEach>
+            </div>
+        </c:when>
+    </c:choose>
     <form class = "ui form" method="POST" action="/orders/upsert">
         <input type="hidden" value="${order.orderNumber}" name="order[orderNumber]"/>
         <div class = "field">
@@ -56,7 +88,7 @@
                 <c:when test="${action == 'CREATE'}">
                     <label> Customer </label>
                     <div id = "customer" class="ui fluid search selection dropdown">
-                        <input type="hidden" name="order[customerCode]">
+                        <input type="hidden" name="order[customerNumber]">
                         <div class="default text">Select Customer</div>
                         <div class="menu">
                             <c:forEach var = "customer" items="${customers}" >
@@ -81,58 +113,52 @@
             </div>
             <div class = "field">
                 <label> Required Date </label>
-                <input type="date" value="${order.requiredDate}" name="order[orderDate]"/>
+                <input type="date" value="${order.requiredDate}" name="order[requiredDate]"/>
             </div>
             <div class = "field">
                 <label> Required Date </label>
-                <input type="date" value="${order.shippedDate}" name="order[orderDate]"/>
+                <input type="date" value="${order.shippedDate}" name="order[shippedDate]"/>
             </div>
         </div>
         <div class = "field">
             <label> Status </label>
-            <input type="text" value="${order.status}" name="order[orderStatus]"/>
+            <input type="text" value="${order.status}" name="order[status]"/>
         </div>
 
         <div class = "field">
             <label> Comments </label>
             <textarea name="order[comments]">${order.comments}</textarea>
         </div>
-        <c:choose>
-            <c:when test="${action == 'CREATE'}">
 
-            </c:when>
-            <c:when test="${action == 'VIEW'}">
-                <div class = "ui basic segment">
-                    <h4> Products Bought </h4>
-                    <table class = "ui padded table">
-                        <thead>
-                            <tr>
-                                <th> Name </th>
-                                <th> Quantity </th>
-                                <th> Price </th>
-                                <th> Total </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="lineitem" items="${order.orderDetails}">
-                            <tr>
-                                <td> ${lineitem.product.name} </td>
-                                <td> ${lineitem.quantityOrdered} </td>
-                                <td> $ ${lineitem.priceEach} </td>
-                                <td> $ ${lineitem.total} </td>
-                            </tr>
-                            </c:forEach>
-                            <tr>
-                                <td> </td>
-                                <td> </td>
-                                <td> </td>
-                                <td> $ ${order.finalPrice} </td>
-                            </tr>
-                        <tbody>
-                    </table>
-                </div>
-            </c:when>
-        </c:choose>
+        <div class = "ui basic segment">
+            <h4> Products Bought </h4>
+            <table class = "ui padded table">
+                <thead>
+                <tr>
+                    <th> Name </th>
+                    <th> Quantity </th>
+                    <th> Price </th>
+                    <th> Total </th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="lineitem" items="${order.orderDetails}">
+                <tr>
+                    <td> ${lineitem.product.name} </td>
+                    <td> ${lineitem.quantityOrdered} </td>
+                    <td> $ ${lineitem.priceEach} </td>
+                    <td> $ ${lineitem.total} </td>
+                </tr>
+                </c:forEach>
+                <tr>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> $ ${order.finalPrice} </td>
+                </tr>
+                <tbody>
+            </table>
+        </div>
         <c:choose>
             <c:when test="${action == 'VIEW'}">
                 <button id = "edit" class = "ui blue button">
@@ -155,11 +181,35 @@
             </c:when>
         </c:choose>
     </form>
+    <form method="POST" action="/orders/reset">
+        <button class = "ui red button"> RESET </button>
+    </form>
 </div>
 </body>
 
 
 <script>
+    function getFormData($form){
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function(n, i){
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
+    $(".add-product-form").submit(function(){
+        var data = getFormData($(this))
+        if (data["lineitem[quantity]"] === "" || data["lineitem[quantity]"] === 0) {
+            alert("Quantity is empty or 0");
+            return false;
+        }
+        return true;
+    });
+
+    $("#customer").dropdown();
     $("#edit").on('click', function(e){
         e.preventDefault()
         $("#edit").prop("disabled", true)
@@ -167,7 +217,6 @@
         $("textarea").prop("readonly", false)
         $("#productCode").prop("disabled", true)
         $("#save").prop("disabled", false)
-        $("#customer").dropdown();
     })
 </script>
 </html>

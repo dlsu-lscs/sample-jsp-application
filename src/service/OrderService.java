@@ -7,6 +7,7 @@ import model.Order;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,23 +118,33 @@ public class OrderService extends DAO <Order> {
                 .values(Order.COLUMNS.length);
 
         String stringQuery = query.getQuery();
-        PreparedStatement statement = injectItemToStatement(newItem, DBConnection.getConnection().prepareStatement(stringQuery));
+        PreparedStatement statement = injectItemToStatement(newItem, DBConnection.getConnection().prepareStatement(stringQuery, Statement.RETURN_GENERATED_KEYS));
 
-        if (statement.execute())
-            return newItem;
+        int id = statement.executeUpdate();
+        ResultSet rs = statement.getGeneratedKeys();
+        if (!rs.next()) {
+            return null;
+        }
 
-        return null;
+        id = rs.getInt(1);
+
+        for (LineItem item: newItem.getOrderDetails()) {
+            item.setOrderNumber(id);
+            lineItemService.create(item);
+        }
+
+        newItem.setOrderNumber(id);
+        return newItem;
     }
 
     @Override
     public PreparedStatement injectItemToStatement(Order newItem, PreparedStatement statement) throws SQLException {
-        statement.setInt(1, newItem.getOrderNumber());
-        statement.setDate(2, newItem.getOrderDate());
-        statement.setDate(3, newItem.getRequiredDate());
-        statement.setDate(4, newItem.getShippedDate());
-        statement.setString(5, newItem.getStatus());
-        statement.setString(6, newItem.getComments());
-        statement.setInt(7, newItem.getCustomer().getCustomerNumber());
+        statement.setDate(1, newItem.getOrderDate());
+        statement.setDate(2, newItem.getRequiredDate());
+        statement.setDate(3, newItem.getShippedDate());
+        statement.setString(4, newItem.getStatus());
+        statement.setString(5, newItem.getComments());
+        statement.setInt(6, newItem.getCustomer().getCustomerNumber());
 
         return statement;
     }
@@ -159,23 +170,4 @@ public class OrderService extends DAO <Order> {
 
         return order;
     }
-
-    public boolean deleteOrdersWithUsers (String id) throws SQLException {
-        builder.reset();
-
-        QueryBuilder query = builder
-                .delete()
-                .from(Order.TABLE_NAME)
-                .where(Order.COL_CUSTOMER_ID + " = ?");
-
-        PreparedStatement statement = DBConnection
-                .getConnection()
-                .prepareStatement(query.getQuery());
-
-        statement.setInt(1, Integer.parseInt(id));
-
-        System.out.println(statement);
-        return statement.execute();
-    }
-
 }
