@@ -57,6 +57,16 @@ public class OrderAction implements Action {
         if (method.equals("POST") && next.equals("upsert")) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
             System.out.println(request.getParameter("order[orderDate]"));
+
+            int orderNumber = 0;
+            try {
+                orderNumber = Integer.parseInt(request.getParameter("order[orderNumber]"));
+                tempOrder.setOrderNumber(orderNumber);
+            } catch (NumberFormatException ne) {
+
+            }
+
+
             Date orderDate = Date.valueOf(request.getParameter("order[orderDate]"));
             tempOrder.setOrderDate(orderDate);
 
@@ -73,13 +83,15 @@ public class OrderAction implements Action {
             tempOrder.setComments(comments);
 
             Customer customer = null;
+
+            System.out.println(request.getParameter("order[customerNumber]"));
             try {
                 customer = customerService.getOne(request.getParameter("order[customerNumber]"));
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            tempOrder.setCustomer(customer);
 
+            tempOrder.setCustomer(customer);
             boolean update = false;
 
             try {

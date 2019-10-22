@@ -83,7 +83,7 @@ public class OrderService extends DAO <Order> {
                 .prepareStatement(query.getQuery());
 
         statement = injectItemToStatement(updated, statement);
-        statement.setInt(1, Integer.parseInt(id));
+        statement.setInt(Order.COLUMNS.length+1, Integer.parseInt(id));
 
         return statement.execute();
     }

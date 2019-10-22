@@ -88,7 +88,7 @@
                 <c:when test="${action == 'CREATE'}">
                     <label> Customer </label>
                     <div id = "customer" class="ui fluid search selection dropdown">
-                        <input type="hidden" name="order[customerNumber]">
+                        <input type="hidden" value="${order.customer.customerNumber}" name="order[customerNumber]">
                         <div class="default text">Select Customer</div>
                         <div class="menu">
                             <c:forEach var = "customer" items="${customers}" >
@@ -102,6 +102,7 @@
 
                 <c:when test="${action == 'VIEW'}">
                     <label> Customer </label>
+                    <input type="hidden" value="${order.customer.customerNumber}" name="order[customerNumber]">
                     <input type="text" value="${order.customer.customerName}" class = "uneditable" name="order[customerName]"/>
                 </c:when>
             </c:choose>
@@ -181,9 +182,13 @@
             </c:when>
         </c:choose>
     </form>
-    <form method="POST" action="/orders/reset">
-        <button class = "ui red button"> RESET </button>
-    </form>
+    <c:choose>
+        <c:when test="${action == 'CREATE'}">
+            <form method="POST" action="/orders/reset">
+                <button class = "ui red button"> RESET </button>
+            </form>
+        </c:when>
+    </c:choose>
 </div>
 </body>
 
